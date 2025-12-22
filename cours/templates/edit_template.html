@@ -1,0 +1,33 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i> {{ page_title }}</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'list_view' model_name %}" class="btn btn-outline-secondary">Артка</a>
+                            <button type="submit" class="btn btn-success">Сактоо</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input, select, textarea {
+        display: block; width: 100%; padding: 0.375rem 0.75rem;
+        font-size: 1rem; border: 1px solid #ced4da; border-radius: 0.375rem;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">📖 Журнал: {{ group.name }}</h2>
+        <span class="badge bg-primary fs-6 p-2">{{ today|date:"d.m.Y" }}</span>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Окуучунун аты-жөнү</th>
+                            <th>Катышуу</th>
+                            <th>Упай / Баа</th>
+                            <th class="text-end pe-4">Аракет</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">{{ student.fio }}</div>
+                            </td>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="student_id" value="{{ student.id }}">
+                                <td>
+                                    <select name="entry_type" class="form-select form-select-sm w-auto">
+                                        <option value="present">Келди</option>
+                                        <option value="absent">Жок</option>
+                                        <option value="late">Кечикти</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="points" class="form-control form-control-sm w-50" placeholder="0-100">
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button type="submit" class="btn btn-sm btn-success px-3">
+                                        Сактоо
+                                    </button>
+                                </td>
+                            </form>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">Бул группада окуучулар жок.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'teacher_dashboard' %}" class="btn btn-outline-secondary">
+            ⬅️ Артка кайтуу
+        </a>
+    </div>
+</div>
+{% endblock %}

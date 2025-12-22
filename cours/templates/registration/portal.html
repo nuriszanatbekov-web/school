@@ -1,0 +1,71 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center w-100 mb-5">
+        <div class="mb-4">
+            <h1 class="fw-bold text-dark display-5">Мектептин Башкаруу Системасы</h1>
+            <p class="text-secondary fs-5">Өзүңүзгө тиешелүү панелди тандаңыз</p>
+        </div>
+
+        <div class="row justify-content-center g-4">
+
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 p-3 h-100 bg-light">
+                    <div class="card-body d-flex flex-column align-items-center text-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-4 mb-3">
+                            <i class="fas fa-user-shield fa-3x text-primary">⚙️</i>
+                        </div>
+                        <h3 class="card-title text-primary fw-bold">Администратор</h3>
+                        <p class="text-muted small mb-4">
+                            Мугалимдерди жана окуучуларды каттоо, системанын жөндөөлөрүн башкаруу.
+                        </p>
+                        <a href="{% url 'login' %}?next={% url 'dashboard' %}" class="btn btn-primary w-100 py-3 mt-auto shadow-sm fw-bold">
+                            Админ катары кирүү
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 p-3 h-100 bg-light">
+                    <div class="card-body d-flex flex-column align-items-center text-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-4 mb-3">
+                            <i class="fas fa-chalkboard-teacher fa-3x text-success">👨‍🏫</i>
+                        </div>
+                        <h3 class="card-title text-success fw-bold">Мугалим</h3>
+                        <p class="text-muted small mb-4">
+                            Электрондук журнал, упай коюу, сабактардын графиги жана үй тапшырмалар.
+                        </p>
+                        <a href="{% url 'teacher_dashboard' %}" class="btn btn-success w-100 py-3 mt-auto shadow-sm fw-bold">
+                            Панелге кирүү
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 p-3 h-100 bg-white border-top border-warning border-5">
+                    <div class="card-body d-flex flex-column align-items-center text-center">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-4 mb-3">
+                            <i class="fas fa-user-graduate fa-3x text-warning">🎓</i>
+                        </div>
+                        <h3 class="card-title text-warning fw-bold">Окуучу</h3>
+                        <p class="text-muted small mb-4">
+                            Жеке жетишкендиктер, алган упайлардын тарыхы жана үй тапшырмаларды текшерүү.
+                        </p>
+                        <a href="{% url 'student_dashboard' %}" class="btn btn-warning w-100 py-3 mt-auto shadow-sm fw-bold text-white">
+                            Кабинетке кирүү
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-5 text-muted small">
+            © 2025 Мектеп порталы. Бардык укуктар корголгон.
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="row animate__animated animate__fadeIn">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="m-0 text-dark">{{ page_title }} Башкаруу</h2>
+                <p class="text-muted small mb-0">Системадагы бардык {{ page_title|lower }} тизмеси</p>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb m-0 bg-transparent p-0">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Башкы</a></li>
+                    <li class="breadcrumb-item active">{{ page_title }}</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <form method="get" class="d-flex align-items-center">
+                    <div class="input-group input-group-sm" style="width: 300px;">
+                        <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Издөө..." value="{{ request.GET.search|default:'' }}">
+                        <button class="btn btn-primary" type="submit">Тап</button>
+                    </div>
+                    {% if request.GET.search %}
+                        <a href="{% url 'list_view' model_name %}" class="btn btn-sm btn-link text-decoration-none text-muted ms-2">Тазалоо</a>
+                    {% endif %}
+                </form>
+
+                <a href="{% url 'add_item' model_name %}" class="btn btn-success btn-sm px-3">
+                    <i class="fas fa-plus-circle me-1"></i> Жаңы {{ page_title|slice:":-1" }} кошуу
+                </a>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted uppercase small">
+                            <tr>
+                                <th class="ps-4" style="width: 80px;">ID</th>
+                                <th>Негизги маалымат</th>
+                                <th>Байланыш / Кошумча</th>
+                                <th class="text-center">Статус / Дата</th>
+                                <th class="text-end pe-4">Аракеттер</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in object_list %}
+                                <tr>
+                                    <td class="ps-4 text-muted fw-bold">#{{ item.id }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-3 bg-soft-primary rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold" style="width: 35px; height: 35px; background: #e7f1ff;">
+                                                {{ item.id }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark text-truncate" style="max-width: 200px;">
+                                                    {% if item.fio %}{{ item.fio }}
+                                                    {% elif item.full_name %}{{ item.full_name }}
+                                                    {% elif item.name %}{{ item.name }}
+                                                    {% elif item.title %}{{ item.title }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="text-muted small">ID: {{ item.id }}00{{ forloop.counter }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="small">
+                                            {% if item.phone_number %}
+                                                <div class="text-dark"><i class="fas fa-phone-alt me-2 text-muted"></i>{{ item.phone_number }}</div>
+                                            {% elif item.address %}
+                                                <div class="text-dark text-truncate" style="max-width: 250px;"><i class="fas fa-map-marker-alt me-2 text-muted"></i>{{ item.address }}</div>
+                                            {% elif item.email %}
+                                                <div class="text-dark"><i class="fas fa-envelope me-2 text-muted"></i>{{ item.email }}</div>
+                                            {% else %}
+                                                <span class="text-muted">Маалымат жок</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if item.is_active is not None %}
+                                            {% if item.is_active %}
+                                                <span class="badge bg-soft-success text-success px-2 py-1 rounded-pill" style="background: #e8fadf;">Активдүү</span>
+                                            {% else %}
+                                                <span class="badge bg-soft-danger text-danger px-2 py-1 rounded-pill" style="background: #feeaea;">Пассив</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted small">{{ item.created_at|date:"d.m.Y"|default:"--" }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group shadow-sm rounded">
+                                            <a href="{% url 'edit_item' model_name item.id %}" class="btn btn-white btn-sm border" title="Өзгөртүү">
+                                                <i class="fas fa-edit text-warning"></i>
+                                            </a>
+                                            <a href="{% url 'delete_item' model_name item.id %}"
+                                               class="btn btn-white btn-sm border"
+                                               onclick="return confirm('Бул маалыматты өчүрүүнү каалайсызбы?')"
+                                               title="Өчүрүү">
+                                                <i class="fas fa-trash-alt text-danger"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5">
+                                        <div class="mb-3">
+                                            <i class="fas fa-folder-open fa-4x text-light"></i>
+                                        </div>
+                                        <h5 class="text-muted">Маалымат табылган жок</h5>
+                                        <p class="small text-muted">Бул бөлүмдө азырынча эч кандай жазуу жок.</p>
+                                        <a href="{% url 'add_item' model_name %}" class="btn btn-primary btn-sm mt-2">Биринчи жазууну кошуу</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-footer bg-white border-top py-3 d-flex justify-content-between align-items-center">
+                <div class="small text-muted">Бардыгы: <strong>{{ object_list|length }}</strong> жазуу</div>
+                <nav>
+                    <ul class="pagination pagination-sm m-0">
+                        <li class="page-item disabled"><a class="page-link" href="#">Мурунку</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item disabled"><a class="page-link" href="#">Кийинки</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

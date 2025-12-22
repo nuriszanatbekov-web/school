@@ -1,0 +1,40 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm p-4 bg-warning text-white" style="border-radius: 20px;">
+                <h2 class="fw-bold">Салам, {{ student.fio }}! 👋</h2>
+                <p class="mb-0">Сенин группаң: <strong>{{ group.name }}</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="fw-bold mb-3">Менин упайларым</h4>
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Күнү</th>
+                        <th>Түрү</th>
+                        <th class="text-end pe-4">Упай</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in my_grades %}
+                    <tr>
+                        <td class="ps-4">{{ record.date }}</td>
+                        <td>{{ record.get_entry_type_display }}</td>
+                        <td class="text-end pe-4 fw-bold text-primary">+{{ record.points }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="text-center py-4">Азырынча упайлар жок.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

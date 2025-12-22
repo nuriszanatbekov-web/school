@@ -1,0 +1,8 @@
+.api-root a:link, .api-root a:visited {
+    color: #4CAF50; /* Жашыл түс */
+}
+
+/* Шилтеме үстүнө барганда түстү өзгөртүү */
+.api-root a:hover {
+    color: #2E8B57;
+}

@@ -37,16 +37,48 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'rest_framework',
     'drf_spectacular',
+    'student',
     'nur_comp',
+    'teacher',
 ]
 
+LOGIN_REDIRECT_URL = 'check_role'  # Логин болгондо ушул дарекке барат
+LOGOUT_REDIRECT_URL = 'portal'     # Чыкканда порталга кайтат
+
+
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Online Course Management API',
-    'DESCRIPTION': 'Director Panel API for managing students, teachers, and courses.',
-    'VERSION': 'v1',
+    # --- Негизги Мета-Маалыматтар ---
+    'TITLE': 'Online Course Management API (NUR_COMP)',  # Аталышты тактоо
+    'DESCRIPTION': 'Окуу борборунун маалыматтарын башкаруу үчүн RESTful API: Мугалимдер, Окуучулар, Группалар, Филиалдар, Кызматтар, Отчеттор.',
+    'VERSION': '1.0.0',  # Версияны тактоо
     'SERVE_INCLUDE_SCHEMA': False,
+
+    # --- UI жана Функциялык Жөндөөлөр ---
+    # Swagger UI'ды ыңгайлуу кылуу үчүн
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,  # URL аркылуу белгилүү бир операцияга өтүү
+        'defaultModelsExpandDepth': 1,  # Моделдерди демейки боюнча жабык кармоо
+        'defaultModelRendering': 'model',
+        'displayRequestDuration': True,  # Сурамдын узактыгын көрсөтүү
+        'filter': True,  # Эндпойнтторду издөө үчүн талаа кошуу
+    },
+
+    # --- TAGS (ViewSets Топторуна Сүрөттөмө Кошуу) ---
+    # Бул сиздин API'ди ар бир ViewSet үчүн бөлүп, сүрөттөп берет
+    'TAGS': [
+        {'name': 'Teachers', 'description': 'Окутуучулардын тизмесин жана маалыматын башкаруу. (Filter: tag, branch)'},
+        {'name': 'Students',
+         'description': 'Окуучулардын каттоосун, группасын жана статусун башкаруу. (Filter: group, branch)'},
+        {'name': 'Groups', 'description': 'Окуу группалары, алардын графиктери жана статусу жөнүндө маалымат.'},
+        {'name': 'Branches', 'description': 'Окуу борборунун бардык филиалдары жөнүндө маалымат.'},
+        {'name': 'Services', 'description': 'Окуу кызматтарынын (Төлөмдөр, Абоненттер) маалыматы.'},
+        {'name': 'Categories', 'description': 'Мугалимдер же предметтер категорияларын башкаруу.'},
+        {'name': 'Subjects', 'description': 'Окутулуучу предметтердин тизмеси.'},
+        {'name': 'Analytics', 'description': 'Системалык отчетторду жана статистикалык маалыматтарды башкаруу.'},
+    ],
 }
 
 MIDDLEWARE = [
@@ -64,7 +96,10 @@ ROOT_URLCONF = 'cours.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+
+            BASE_DIR / 'cours' / 'templates',
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -120,16 +155,32 @@ USE_I18N = True
 
 USE_TZ = True
 
+STATIC_URL = 'static/'
+# !!! Төмөнкү саптарды кошуңуз:
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # !!! ОҢДОЛГОН REST_FRAMEWORK БЛОГУ !!!
 REST_FRAMEWORK = {
     # Swagger катасын оңдоо үчүн (бул азыр иштеп жатат)
+
+    'DEFAULT_FILTER_BACKENDS': (
+        # Фильтрлөө жана Издөө үчүн бул эки сап милдеттүү:
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+    ),
+
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
     # -----------------------------------------------------
@@ -150,5 +201,10 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-    )
+    ),
+
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+
+    'PAGE_SIZE': 20,
 }
