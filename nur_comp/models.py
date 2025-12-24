@@ -54,6 +54,7 @@ class Group(models.Model):
         return self.name
 
 class ListStudent(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     full_name = models.CharField(max_length=50)
     email = models.EmailField()
     birthday = models.DateField()

@@ -45,12 +45,10 @@ INSTALLED_APPS = [
     'teacher',
 ]
 
-LOGIN_REDIRECT_URL = 'check_role'  # Логин болгондо ушул дарекке барат
-LOGOUT_REDIRECT_URL = 'portal'     # Чыкканда порталга кайтат
 
 
 SPECTACULAR_SETTINGS = {
-    # --- Негизги Мета-Маалыматтар ---
+
     'TITLE': 'Online Course Management API (NUR_COMP)',  # Аталышты тактоо
     'DESCRIPTION': 'Окуу борборунун маалыматтарын башкаруу үчүн RESTful API: Мугалимдер, Окуучулар, Группалар, Филиалдар, Кызматтар, Отчеттор.',
     'VERSION': '1.0.0',  # Версияны тактоо
@@ -208,3 +206,7 @@ REST_FRAMEWORK = {
 
     'PAGE_SIZE': 20,
 }
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'  # Логин болгондон кийин кайда барат
+LOGOUT_REDIRECT_URL = 'login'     # Чыккандан кийин кайсы баракка барат

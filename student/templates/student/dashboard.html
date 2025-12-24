@@ -1,40 +1,266 @@
 {% extends "dashboard.html" %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm p-4 bg-warning text-white" style="border-radius: 20px;">
-                <h2 class="fw-bold">Салам, {{ student.fio }}! 👋</h2>
-                <p class="mb-0">Сенин группаң: <strong>{{ group.name }}</strong></p>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --student-primary: #f59e0b;
+        --student-secondary: #fbbf24;
+        --student-gradient: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+        --card-bg: #ffffff;
+        --body-bg: #f8fafc;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--body-bg);
+    }
+
+    /* --- PREMIUM STUDENT HEADER --- */
+    .student-hero {
+        background: var(--student-gradient);
+        border-radius: 30px;
+        padding: 40px;
+        color: white;
+        margin-bottom: 35px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 15px 35px -10px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Декоративдик абстракттык тегеректер */
+    .student-hero::before {
+        content: ""; position: absolute; top: -20%; right: -10%; width: 300px; height: 300px;
+        background: rgba(255, 255, 255, 0.1); border-radius: 50%;
+    }
+
+    .hero-glass-card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 15px 25px;
+    }
+
+    /* --- STAT CARDS --- */
+    .stat-card-premium {
+        background: white;
+        border-radius: 24px;
+        padding: 25px;
+        border: 1px solid #edf2f7;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+    }
+
+    .stat-card-premium:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+    }
+
+    .icon-shape {
+        width: 50px; height: 50px;
+        border-radius: 15px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+
+    .score-value {
+        font-size: 2.8rem;
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: #1e293b;
+        line-height: 1;
+    }
+
+    /* --- TABLE DESIGN --- */
+    .glass-table-container {
+        background: white;
+        border-radius: 30px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+        overflow: hidden;
+    }
+
+    .custom-table thead th {
+        background: #f8fafc;
+        padding: 20px 24px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #64748b;
+        border: none;
+    }
+
+    .custom-table tbody td {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    /* --- STATUS BADGES --- */
+    .pill {
+        padding: 6px 14px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+    .pill-present { background: #dcfce7; color: #166534; }
+    .pill-late { background: #fef9c3; color: #854d0e; }
+    .pill-absent { background: #fee2e2; color: #991b1b; }
+
+    .point-badge {
+        background: #fff7ed;
+        color: #ea580c;
+        border: 1px solid #fdba74;
+        font-weight: 800;
+        padding: 5px 12px;
+        border-radius: 12px;
+    }
+
+</style>
+
+
+
+<div class="container-fluid px-4 py-4">
+    <div class="student-hero d-md-flex align-items-center justify-content-between animate__animated animate__fadeIn">
+        <div class="z-1">
+            <h4 class="opacity-80 fw-500 mb-1">Кайрадан кош келиңиз!</h4>
+            <h1 class="display-6 fw-800 mb-0">{{ student.full_name }} 👋</h1>
+            <p class="mt-2 opacity-75 fw-medium"><i class="far fa-calendar-alt me-1"></i> Бүгүн: {% now "d F, Y" %}</p>
+        </div>
+        <div class="mt-3 mt-md-0 hero-glass-card z-1">
+            <div class="small fw-bold opacity-75 text-uppercase">Менин тайпам</div>
+            <div class="h5 fw-800 mb-0 text-white">{{ student.group.name }}</div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-4 col-md-6">
+            <div class="stat-card-premium animate__animated animate__fadeInLeft">
+                <div class="icon-shape bg-warning bg-opacity-10 text-warning">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <h6 class="text-muted fw-bold small">ЖАЛПЫ УПАЙЛАРЫМ</h6>
+                <div class="d-flex align-items-end gap-2">
+                    <span class="score-value">{{ total_points }}</span>
+                    <span class="text-success small fw-bold mb-2"><i class="fas fa-trending-up"></i> Top 5%</span>
+                </div>
+                <div class="progress mt-4" style="height: 10px; border-radius: 20px; background: #f1f5f9;">
+                    <div class="progress-bar" role="progressbar" style="width: 78%; background: var(--student-gradient); border-radius: 20px;"></div>
+                </div>
+                <p class="text-muted small mt-2 mb-0">Кийинки деңгээлге чейин <b>45 упай</b> калды</p>
+            </div>
+        </div>
+
+        <div class="col-lg-8 col-md-6">
+            <div class="stat-card-premium animate__animated animate__fadeInRight">
+                <h6 class="text-muted fw-bold small mb-4">ОКУУ КӨРСӨТКҮЧТӨРҮ</h6>
+                <div class="row g-3">
+                    <div class="col-4">
+                        <div class="p-3 rounded-4 bg-light text-center border">
+                            <h3 class="fw-800 mb-0 text-primary">92%</h3>
+                            <small class="text-muted fw-bold">Катышуу</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 rounded-4 bg-light text-center border">
+                            <h3 class="fw-800 mb-0 text-success">4.9</h3>
+                            <small class="text-muted fw-bold">Орточо балл</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 rounded-4 bg-light text-center border">
+                            <h3 class="fw-800 mb-0 text-dark">24</h3>
+                            <small class="text-muted fw-bold">Сабактар</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-warning bg-opacity-10 rounded-4 border border-warning border-opacity-20">
+                    <div class="small fw-bold text-warning"><i class="fas fa-lightbulb me-2"></i> Сунуш:</div>
+                    <div class="small text-dark">Үй тапшырмаларын убагында тапшыруу менен упайларды 2 эсе тезирээк топтосоңуз болот!</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <h4 class="fw-bold mb-3">Менин упайларым</h4>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-hover mb-0">
-                <thead class="bg-light">
+    <div class="glass-table-container animate__animated animate__fadeInUp">
+        <div class="p-4 border-bottom bg-white d-flex justify-content-between align-items-center">
+            <h5 class="fw-800 m-0"><i class="fas fa-history me-2 text-warning"></i> Акыркы активдүүлүк</h5>
+            <div class="dropdown">
+                <button class="btn btn-light btn-sm rounded-pill px-3 border dropdown-toggle" data-bs-toggle="dropdown">
+                    Бул айда
+                </button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table custom-table mb-0">
+                <thead>
                     <tr>
-                        <th class="ps-4">Күнү</th>
-                        <th>Түрү</th>
-                        <th class="text-end pe-4">Упай</th>
+                        <th>Күнү</th>
+                        <th>Предмет / Мугалим</th>
+                        <th>Статус</th>
+                        <th>Упай</th>
+                        <th>Комментарий</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for record in my_grades %}
+                    {% for grade in my_grades %}
                     <tr>
-                        <td class="ps-4">{{ record.date }}</td>
-                        <td>{{ record.get_entry_type_display }}</td>
-                        <td class="text-end pe-4 fw-bold text-primary">+{{ record.points }}</td>
+                        <td class="text-muted fw-medium">{{ grade.date|date:"d.m.Y" }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-info bg-opacity-10 text-info rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold small">{{ grade.teacher.fio }}</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Backend Development</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if grade.entry_type == 'present' %}
+                                <span class="pill pill-present">Келди</span>
+                            {% elif grade.entry_type == 'late' %}
+                                <span class="pill pill-late">Кечикти</span>
+                            {% else %}
+                                <span class="pill pill-absent">Жок</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="point-badge">+{{ grade.points }}</span>
+                        </td>
+                        <td>
+                            <div class="text-muted small" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ grade.comment }}">
+                                {{ grade.comment|default:"—" }}
+                            </div>
+                        </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="3" class="text-center py-4">Азырынча упайлар жок.</td></tr>
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="py-4">
+                                <i class="fas fa-box-open fs-1 text-muted opacity-25 mb-3"></i>
+                                <p class="text-muted fw-bold">Азырынча эч кандай упай бериле элек</p>
+                            </div>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<script>
+    // Жөнөкөй анимациялык эффекттер үчүн
+    document.querySelectorAll('.stat-card-premium').forEach(card => {
+        card.addEventListener('mouseenter', () => card.style.borderColor = 'var(--student-primary)');
+        card.addEventListener('mouseleave', () => card.style.borderColor = '#edf2f7');
+    });
+</script>
+
 {% endblock %}

@@ -1,94 +1,80 @@
 {% extends "dashboard.html" %}
 
 {% block content %}
-<style>
-    /* Дизайнды бир аз жумшартуу жана заманбап кылуу */
-    .teacher-card { transition: all 0.3s ease; border-radius: 15px; }
-    .teacher-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
-    .icon-shape { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
-    .bg-soft-primary { background-color: #e7f1ff; color: #0d6efd; }
-    .bg-soft-success { background-color: #e6fcf5; color: #0ca678; }
-    .group-card { border-left: 5px solid #0d6efd; }
-</style>
-
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold text-dark mb-0">Мугалимдин жеке кабинети</h2>
-            <p class="text-muted">Кош келиңиз, {{ teacher.fio }}! Бүгүнкү иштериңизге ийгилик.</p>
-        </div>
-        <div class="d-none d-md-block">
-            <span class="badge bg-white text-dark shadow-sm p-2 px-3 border">
-                <i class="far fa-calendar-alt me-2 text-primary"></i> {% now "d-m-Y" %}
-            </span>
-        </div>
-    </div>
-
+<div class="container-fluid">
     <div class="row g-4 mb-5">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm p-3 teacher-card">
-                <div class="d-flex align-items-center">
-                    <div class="icon-shape bg-soft-primary rounded-3 me-3">
-                        <i class="fas fa-user-graduate fa-2x"></i>
-                    </div>
-                    <div>
-                        <h6 class="text-muted mb-1 text-uppercase small fw-bold">Жалпы окуучулар</h6>
-                        <h2 class="mb-0 fw-bold text-dark">{{ total_students }}</h2>
-                    </div>
-                </div>
+        <div class="col-12 animate__animated animate__fadeIn">
+            <div class="p-4 rounded-4 shadow-sm border-0" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white;">
+                <h2 class="fw-800 mb-1">Кутман күн, {{ teacher.fio }}! 👋</h2>
+                <p class="opacity-75 mb-0">Бүгүн сизде активдүү {{ groups.count }} группа бар.</p>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm p-3 teacher-card">
-                <div class="d-flex align-items-center">
-                    <div class="icon-shape bg-soft-success rounded-3 me-3">
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                    <div>
-                        <h6 class="text-muted mb-1 text-uppercase small fw-bold">Берилген упайлар</h6>
-                        <h2 class="mb-0 fw-bold text-dark">{{ total_points }}</h2>
-                    </div>
-                </div>
+
+        <div class="col-xl-4 col-md-6">
+            <div class="stat-card-premium">
+                <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-users"></i></div>
+                <h6 class="text-muted small fw-bold">МЕНИН ОКУУЧУЛАРЫМ</h6>
+                <h2 class="fw-800 m-0">{{ total_students }}</h2>
+                <div class="mt-3 text-success small fw-bold">Активдүү окуучулар</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="stat-card-premium">
+                <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fas fa-star"></i></div>
+                <h6 class="text-muted small fw-bold">ЖАЛПЫ КОЮЛГАН УПАЙЛАР</h6>
+                <h2 class="fw-800 m-0">{{ total_points }}</h2>
+                <div class="mt-3 text-muted small fw-bold">Акыркы 30 күндө</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="stat-card-premium">
+                <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-layer-group"></i></div>
+                <h6 class="text-muted small fw-bold">ГРУППАЛАР</h6>
+                <h2 class="fw-800 m-0">{{ groups.count }}</h2>
+                <div class="mt-3 text-primary small fw-bold">Учурдагы семестр</div>
             </div>
         </div>
     </div>
 
-    <div class="d-flex align-items-center mb-4">
-        <div class="bg-primary rounded-2 me-2" style="width: 5px; height: 25px;"></div>
-        <h4 class="fw-bold mb-0">Менин группаларым</h4>
-    </div>
-
-    <div class="row g-4">
-        {% for group in groups %}
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm teacher-card group-card">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between mb-3">
-                        <h5 class="card-title fw-bold text-dark mb-0">{{ group.name }}</h5>
-                        <span class="badge bg-light text-primary border border-primary-subtle">Активдүү</span>
-                    </div>
-                    <div class="mb-4">
-                        <p class="text-muted small mb-2">
-                            <i class="fas fa-book me-2"></i> Курс: <strong>{{ group.service.name }}</strong>
-                        </p>
-                        <p class="text-muted small mb-0">
-                            <i class="fas fa-users me-2"></i> Окуучулар: <strong>{{ group.liststudent_set.count }}</strong>
-                        </p>
-                    </div>
-                    <a href="{% url 'group_journal' group.id %}" class="btn btn-primary w-100 py-2 fw-bold">
-                        <i class="fas fa-pen-nib me-2"></i> Журналды толтуруу
-                    </a>
+    <div class="row">
+        <div class="col-12">
+            <div class="premium-table-box animate__animated animate__fadeInUp">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-800 m-0">Менин Группаларым</h5>
+                    <a href="{% url 'teacher_groups' %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">Баарын көрүү</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>ГРУППАНЫН АТЫ</th>
+                                <th>КУРС / БАГЫТ</th>
+                                <th>ОКУУЧУЛАР САНЫ</th>
+                                <th>ЖУРНАЛ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for group in groups %}
+                            <tr>
+                                <td class="fw-bold">{{ group.name }}</td>
+                                <td>{{ group.subject.name|default:"Багыты жок" }}</td>
+                                <td><span class="badge bg-light text-dark rounded-pill px-3">{{ group.liststudent_set.count }} окуучу</span></td>
+                                <td>
+                                    <a href="{% url 'group_journal' group.id %}" class="btn btn-primary btn-sm rounded-pill">
+                                        <i class="fas fa-pen-nib me-1"></i> Журналды ачуу
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">Азырынча группаларыңыз жок.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
-            <div class="text-muted">
-                <i class="fas fa-folder-open fa-4x mb-3 opacity-25"></i>
-                <h5>Группалар табылган жок</h5>
-            </div>
-        </div>
-        {% endfor %}
     </div>
 </div>
 {% endblock %}

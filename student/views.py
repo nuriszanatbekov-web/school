@@ -1,31 +1,39 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+# Негизги моделдер nur_comp тиркемесинде жайгашкан:
 from nur_comp.models import ListStudent, Group
-from teacher.models import Journal, Schedule, Homework
+# Журнал жана График teacher тиркемесинде жайгашкан:
+from teacher.models import Journal, Schedule
 
+def is_student(user):
+    return hasattr(user, 'liststudent')
 
-def get_student_profile(request):
-    """ Тест үчүн базадагы биринчи окуучуну алабыз (логинсиз кирүү үчүн) """
-    return ListStudent.objects.first()
-
-
+@login_required
+@user_passes_test(is_student)
 def student_dashboard(request):
-    student = get_student_profile(request)
-    # Окуучунун упайларынын тарыхы
+    student = request.user.liststudent
     my_grades = Journal.objects.filter(student=student).order_by('-date')
-    # Окуучунун группасы
     group = student.group
+    total_points = sum(grade.points for grade in my_grades)
 
     context = {
         'student': student,
         'group': group,
         'my_grades': my_grades,
+        'total_points': total_points,
         'page_title': 'Окуучунун жеке кабинети'
     }
     return render(request, 'student/dashboard.html', context)
 
-
+@login_required
+@user_passes_test(is_student)
 def student_schedule(request):
-    student = get_student_profile(request)
-    # Окуучунун группасына тиешелүү график
+    student = request.user.liststudent
     schedule = Schedule.objects.filter(group=student.group).order_by('day_of_week')
-    return render(request, 'student/schedule.html', {'schedule': schedule, 'student': student})
+
+    context = {
+        'schedule': schedule,
+        'student': student,
+        'page_title': 'Менин сабак графигим'
+    }
+    return render(request, 'student/schedule.html', context)
