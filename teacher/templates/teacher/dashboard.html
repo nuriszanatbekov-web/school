@@ -1,80 +1,203 @@
 {% extends "dashboard.html" %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row g-4 mb-5">
-        <div class="col-12 animate__animated animate__fadeIn">
-            <div class="p-4 rounded-4 shadow-sm border-0" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white;">
-                <h2 class="fw-800 mb-1">Кутман күн, {{ teacher.fio }}! 👋</h2>
-                <p class="opacity-75 mb-0">Бүгүн сизде активдүү {{ groups.count }} группа бар.</p>
-            </div>
-        </div>
+<div class="container-fluid py-4">
 
-        <div class="col-xl-4 col-md-6">
-            <div class="stat-card-premium">
-                <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-users"></i></div>
-                <h6 class="text-muted small fw-bold">МЕНИН ОКУУЧУЛАРЫМ</h6>
-                <h2 class="fw-800 m-0">{{ total_students }}</h2>
-                <div class="mt-3 text-success small fw-bold">Активдүү окуучулар</div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-md-6">
-            <div class="stat-card-premium">
-                <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fas fa-star"></i></div>
-                <h6 class="text-muted small fw-bold">ЖАЛПЫ КОЮЛГАН УПАЙЛАР</h6>
-                <h2 class="fw-800 m-0">{{ total_points }}</h2>
-                <div class="mt-3 text-muted small fw-bold">Акыркы 30 күндө</div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-md-6">
-            <div class="stat-card-premium">
-                <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-layer-group"></i></div>
-                <h6 class="text-muted small fw-bold">ГРУППАЛАР</h6>
-                <h2 class="fw-800 m-0">{{ groups.count }}</h2>
-                <div class="mt-3 text-primary small fw-bold">Учурдагы семестр</div>
+    <div class="row mb-4 animate__animated animate__fadeIn">
+        <div class="col-12">
+            <div class="p-5 rounded-4 shadow-lg border-0 position-relative overflow-hidden text-white"
+                 style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);">
+                <div class="position-relative z-index-1">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-white bg-opacity-20 rounded-pill px-3 py-2 fw-bold shadow-sm">
+                            <i class="fas fa-calendar-alt me-2"></i> {% now "d F, Y" %}
+                        </span>
+                    </div>
+                    <h1 class="display-5 fw-800 mb-2">Добрый день, {{ teacher.fio|default:user.username }}! 👋</h1>
+                    <p class="opacity-75 mb-0 fs-5 w-75">Добро пожаловать в систему управления обучением. Сегодня у вас активных групп: <strong>{{ groups.count }}</strong>.</p>
+                </div>
+                <i class="fas fa-graduation-cap position-absolute"
+                   style="right: -40px; bottom: -40px; font-size: 18rem; opacity: 0.15; transform: rotate(-15deg);"></i>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="premium-table-box animate__animated animate__fadeInUp">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-800 m-0">Менин Группаларым</h5>
-                    <a href="{% url 'teacher_groups' %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">Баарын көрүү</a>
+    <div class="row g-4 mb-5 animate__animated animate__fadeInUp">
+        <div class="col-xl-4 col-md-6">
+            <div class="stat-card-premium bg-white p-4 rounded-4 shadow-sm border-0 h-100 transition-hover">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div class="stat-icon bg-primary-light text-primary">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <span class="badge badge-success-light">Активдүү</span>
                 </div>
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
-                            <tr>
-                                <th>ГРУППАНЫН АТЫ</th>
-                                <th>КУРС / БАГЫТ</th>
-                                <th>ОКУУЧУЛАР САНЫ</th>
-                                <th>ЖУРНАЛ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for group in groups %}
-                            <tr>
-                                <td class="fw-bold">{{ group.name }}</td>
-                                <td>{{ group.subject.name|default:"Багыты жок" }}</td>
-                                <td><span class="badge bg-light text-dark rounded-pill px-3">{{ group.liststudent_set.count }} окуучу</span></td>
-                                <td>
-                                    <a href="{% url 'group_journal' group.id %}" class="btn btn-primary btn-sm rounded-pill">
-                                        <i class="fas fa-pen-nib me-1"></i> Журналды ачуу
-                                    </a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="text-center py-4 text-muted">Азырынча группаларыңыз жок.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <h6 class="text-muted small fw-bold text-uppercase mb-1 ls-1">Мои ученики</h6>
+                <h2 class="fw-800 mb-0">{{ total_students|default:"0" }}</h2>
+                <div class="mt-4 border-top pt-3">
+                    <a href="{% url 'teacher_students' %}" class="text-primary text-decoration-none small fw-bold">
+                        Список учеников <i class="fas fa-arrow-right ms-2 animate-arrow"></i>
+                    </a>
                 </div>
             </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6">
+            <div class="stat-card-premium bg-white p-4 rounded-4 shadow-sm border-0 h-100 transition-hover">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div class="stat-icon bg-success-light text-success">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="text-muted small fw-bold">Всего</div>
+                </div>
+                <h6 class="text-muted small fw-bold text-uppercase mb-1 ls-1">Общие очки</h6>
+                <h2 class="fw-800 mb-0">{{ total_points|default:"0" }}</h2>
+                <div class="mt-4 border-top pt-3">
+                    <span class="text-muted small">Темп активности: <span class="text-success fw-bold">Высокий</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6">
+            <div class="stat-card-premium bg-white p-4 rounded-4 shadow-sm border-0 h-100 transition-hover">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div class="stat-icon bg-warning-light text-warning">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <span class="badge bg-light text-dark rounded-pill border">Текущий семестр</span>
+                </div>
+                <h6 class="text-muted small fw-bold text-uppercase mb-1 ls-1">Группы</h6>
+                <h2 class="fw-800 mb-0">{{ groups.count|default:"0" }}</h2>
+                <div class="mt-4 border-top pt-3 text-muted small">
+                    <i class="fas fa-info-circle me-1"></i> Нажмите "Журнал" ниже
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+        <div class="card-header bg-white border-0 py-4 px-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+                <div>
+                    <h4 class="fw-800 m-0 text-dark">Мои активные группы</h4>
+                    <p class="text-muted small mb-0 mt-1">Управляйте журналом и отслеживайте прогресс студентов.</p>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="search-box position-relative">
+                        <i class="fas fa-search position-absolute text-muted" style="left: 15px; top: 12px;"></i>
+                        <input type="text" class="form-control rounded-pill ps-5 border-0 bg-light-subtle" placeholder="Поиск группы..." style="height: 40px; width: 220px;">
+                    </div>
+                    <a href="{% url 'teacher_students' %}" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm h-40 d-flex align-items-center">
+                        <i class="fas fa-users me-2"></i> Ученики
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr class="text-muted small fw-bold ls-1">
+                        <th class="ps-4 py-3">ГРУППА</th>
+                        <th>КУРС / НАПРАВЛЕНИЕ</th>
+                        <th class="text-center">СТУДЕНТЫ</th>
+                        <th class="text-center" style="min-width: 150px;">ПРОГРЕСС</th>
+                        <th class="text-end pe-4">ДЕЙСТВИЯ</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    {% for group in groups %}
+                    <tr>
+                        <td class="ps-4 py-4">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-letter me-3">
+                                    {{ group.name|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <span class="fw-bold text-dark d-block">{{ group.name }}</span>
+                                    <span class="text-muted x-small">ID: {{ group.id }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="text-muted small d-flex align-items-center">
+                                <i class="fas fa-book-open me-2 text-primary opacity-50"></i>
+                                {{ group.subject.name|default:"Программирование" }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge badge-primary-light">
+                                <i class="fas fa-users-viewfinder me-1"></i> {{ group.liststudent_set.count }}
+                            </span>
+                        </td>
+                        <td class="text-center px-4">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 8px; border-radius: 10px;">
+                                    <div class="progress-bar bg-primary rounded-pill" role="progressbar" style="width: 75%;"></div>
+                                </div>
+                                <span class="fw-bold small text-muted">75%</span>
+                            </div>
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{% url 'group_journal' group.id %}" class="btn btn-dark btn-sm rounded-pill px-3 fw-bold">
+                                    <i class="fas fa-clipboard-list me-1"></i> Журнал
+                                </a>
+                                <button class="btn btn-light btn-sm rounded-circle shadow-sm">
+                                    <i class="fas fa-ellipsis-v text-muted"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="80" class="opacity-20 mb-3">
+                            <p class="text-muted fw-bold">У вас пока нет активных групп.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+
+    /* Typography & Utilities */
+    .fw-800 { font-weight: 800; }
+    .ls-1 { letter-spacing: 0.5px; }
+    .x-small { font-size: 0.75rem; }
+    .h-40 { height: 40px; }
+
+    /* Stat Cards Custom UI */
+    .stat-card-premium { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .transition-hover:hover { transform: translateY(-7px); box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important; }
+
+    .stat-icon {
+        width: 54px; height: 54px; border-radius: 14px;
+        display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+
+    .avatar-letter {
+        width: 48px; height: 48px; border-radius: 12px;
+        background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+        color: #4f46e5; display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 1.2rem;
+    }
+
+    /* Colors */
+    .bg-primary-light { background: #eef2ff; }
+    .bg-success-light { background: #ecfdf5; }
+    .bg-warning-light { background: #fffbeb; }
+    .bg-light-subtle { background: #f1f5f9; }
+
+    .badge-primary-light { background: #eef2ff; color: #4f46e5; border-radius: 10px; padding: 6px 12px; font-weight: 700; }
+    .badge-success-light { background: #d1fae5; color: #059669; border-radius: 10px; padding: 4px 10px; font-weight: 700; }
+
+    /* Animations */
+    .animate-arrow { transition: transform 0.2s; }
+    .transition-hover:hover .animate-arrow { transform: translateX(5px); }
+</style>
 {% endblock %}

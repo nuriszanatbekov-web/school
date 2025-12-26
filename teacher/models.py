@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from nur_comp.models import ListTeacher, ListStudent, Group
+from django.core.exceptions import ValidationError
 
 # 1. Мугалимдин журналы (Упайлар жана катышуу)
 class Journal(models.Model):
@@ -39,17 +40,21 @@ class Schedule(models.Model):
         (4, 'Бейшемби'), (5, 'Жума'), (6, 'Ишемби'), (7, 'Жекшемби'),
     ]
 
-    teacher = models.ForeignKey(ListTeacher, on_delete=models.CASCADE, verbose_name="Мугалим")
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name="Группа")
+    # 'nur_comp.ModelName' деп жазуу менен Django'го моделди кайсы папкадан издөө керек экенин так айтабыз
+    teacher = models.ForeignKey('nur_comp.ListTeacher', on_delete=models.CASCADE, verbose_name="Мугалим")
+    group = models.ForeignKey('nur_comp.Group', on_delete=models.CASCADE, verbose_name="Группа")
+
     day_of_week = models.IntegerField(choices=DAYS, verbose_name="Апта күнү")
     start_time = models.TimeField(verbose_name="Башталышы")
     end_time = models.TimeField(verbose_name="Аякташы")
-    room = models.CharField(max_length=50, blank=True, verbose_name="Кабинет")
+    room = models.CharField(max_length=50, blank=True, null=True, verbose_name="Кабинет")
 
     class Meta:
-        verbose_name = "График"
-        verbose_name_plural = "Графиктер"
+        verbose_name = "Сабак графиги"
+        verbose_name_plural = "Сабактардын графиги"
 
+    def __str__(self):
+        return f"{self.group} - {self.get_day_of_week_display()}"
 # 3. Үй тапшырмалары (Placeholder катары)
 class Homework(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)

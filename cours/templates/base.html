@@ -12,39 +12,92 @@
     <style>
         :root {
             --sidebar-bg: #0f172a;
+            --sidebar-hover: rgba(255, 255, 255, 0.08);
             --primary-blue: #6366f1;
             --accent-purple: #a855f7;
             --body-bg: #f8fafc;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --text-muted: #94a3b8;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
         }
 
-        body { background-color: var(--body-bg); font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--body-bg); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
 
+        /* Sidebar Styling */
         #sidebar-wrapper {
             width: 280px; background: var(--sidebar-bg); position: fixed;
-            height: 100vh; z-index: 1000; transition: all 0.3s;
+            height: 100vh; z-index: 1000; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
         }
-        .sidebar-brand { padding: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .nav-menu { padding: 20px; height: calc(100vh - 180px); overflow-y: auto; }
+
+        .sidebar-brand {
+            padding: 30px; text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.2);
+        }
+
+        .nav-menu {
+            padding: 20px 15px;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #334155 transparent;
+        }
+
+        /* Nav Labels */
         .nav-label {
-            color: #64748b; font-size: 0.75rem; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1.2px; margin: 20px 0 10px 10px;
+            color: #475569; font-size: 0.7rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            margin: 25px 0 10px 12px;
         }
+
+        /* Menu Links */
         .nav-link-custom {
-            display: flex; align-items: center; padding: 12px 15px; color: #94a3b8;
-            text-decoration: none; border-radius: 10px; font-weight: 500; margin-bottom: 5px;
-            transition: 0.3s;
+            display: flex; align-items: center; padding: 12px 16px; color: var(--text-muted);
+            text-decoration: none; border-radius: 12px; font-weight: 500; margin-bottom: 4px;
+            transition: 0.2s all; position: relative;
         }
-        .nav-link-custom:hover, .nav-link-custom.active { background: rgba(255, 255, 255, 0.1); color: white; }
-        .nav-link-custom.active { background: var(--primary-blue); color: white; }
-        .nav-link-custom i { width: 25px; font-size: 1.1rem; }
 
-        #page-content-wrapper { margin-left: 280px; width: calc(100% - 280px); min-height: 100vh; }
+        .nav-link-custom i { width: 28px; font-size: 1.1rem; transition: 0.2s; }
 
+        .nav-link-custom:hover { background: var(--sidebar-hover); color: white; }
+
+        .nav-link-custom.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+            color: white; box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .nav-link-custom.active i { color: white; }
+
+        /* Page Content */
+        #page-content-wrapper {
+            margin-left: 280px; width: calc(100% - 280px);
+            min-height: 100vh; transition: all 0.3s;
+        }
+
+        /* Navbar Customization */
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .notification-dot {
+            width: 8px; height: 8px; background: #ef4444;
+            border-radius: 50%; position: absolute; top: 10px; right: 10px;
+            border: 2px solid white;
+        }
+
+        /* Responsive */
         @media (max-width: 992px) {
             #sidebar-wrapper { transform: translateX(-280px); }
             #sidebar-wrapper.toggled { transform: translateX(0); }
             #page-content-wrapper { margin-left: 0; width: 100%; }
+        }
+
+        /* Logout Section */
+        .logout-box {
+            padding: 20px; border-top: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -53,74 +106,114 @@
 <div id="wrapper">
     <div id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <h4 class="text-white fw-bold m-0">NUR <span style="color: var(--primary-blue);">COMP</span></h4>
+            <h4 class="text-white fw-bold m-0" style="letter-spacing: -1px;">
+                NUR <span style="color: var(--primary-blue);">COMP</span>
+            </h4>
         </div>
 
         <nav class="nav-menu">
             {% if user.is_superuser %}
-                <div class="nav-label">Админ Негизги</div>
-                <a href="{% url 'dashboard' %}" class="nav-link-custom {% if '/dashboard/' in request.path %}active{% endif %}">
+                <div class="nav-label">Аналитика</div>
+                <a href="{% url 'list_view' 'dashboard' %}" class="nav-link-custom {% if model_name == 'dashboard' %}active{% endif %}">
                     <i class="fas fa-chart-pie"></i> Дашборд
                 </a>
+                <a href="{% url 'list_view' 'analytics' %}" class="nav-link-custom {% if model_name == 'analytics' %}active{% endif %}">
+                    <i class="fas fa-bolt"></i> Отчёттор
+                </a>
+                <a href="{% url 'list_view' 'branches' %}" class="nav-link-custom {% if model_name == 'branches' %}active{% endif %}">
+                    <i class="fas fa-building"></i> Филиалдар
+                </a>
 
-                <div class="nav-label">Маалыматтар</div>
-                <a href="{% url 'list_view' 'teachers' %}" class="nav-link-custom {% if 'teachers' in request.path %}active{% endif %}">
+                <div class="nav-label">Маалыматтарды Башкаруу</div>
+                <a href="{% url 'list_view' 'teachers' %}" class="nav-link-custom {% if model_name == 'teachers' %}active{% endif %}">
                     <i class="fas fa-user-tie"></i> Мугалимдер
                 </a>
-                <a href="{% url 'list_view' 'students' %}" class="nav-link-custom {% if 'students' in request.path %}active{% endif %}">
+                <a href="{% url 'list_view' 'students' %}" class="nav-link-custom {% if model_name == 'students' %}active{% endif %}">
                     <i class="fas fa-user-graduate"></i> Окуучулар
                 </a>
-                <a href="{% url 'list_view' 'groups' %}" class="nav-link-custom {% if 'groups' in request.path %}active{% endif %}">
+                <a href="{% url 'list_view' 'groups' %}" class="nav-link-custom {% if model_name == 'groups' %}active{% endif %}">
                     <i class="fas fa-users"></i> Группалар
                 </a>
-                <a href="{% url 'list_view' 'branches' %}" class="nav-link-custom {% if 'branches' in request.path %}active{% endif %}">
-                    <i class="fas fa-map-marker-alt"></i> Филиалдар
+                <a href="{% url 'list_view' 'subjects' %}" class="nav-link-custom {% if model_name == 'subjects' %}active{% endif %}">
+                    <i class="fas fa-book"></i> Сабактар
                 </a>
 
-                <div class="nav-label">Кошумча</div>
-                <a href="{% url 'list_view' 'services' %}" class="nav-link-custom {% if 'services' in request.path %}active{% endif %}">
+                <div class="nav-label">Система</div>
+                <a href="{% url 'list_view' 'services' %}" class="nav-link-custom {% if model_name == 'services' %}active{% endif %}">
                     <i class="fas fa-concierge-bell"></i> Кызматтар
                 </a>
+                <a href="#" class="nav-link-custom">
+                    <i class="fas fa-bell"></i> Билдирмелер
+                </a>
 
-            {% else %}
-                <div class="nav-label">Менин кабинетим</div>
+            {% elif user.listteacher %}
+                <div class="nav-label">Негизги</div>
                 <a href="{% url 'teacher_dashboard' %}" class="nav-link-custom {% if 'teacher/dashboard' in request.path %}active{% endif %}">
                     <i class="fas fa-th-large"></i> Дашборд
                 </a>
                 <a href="{% url 'teacher_groups' %}" class="nav-link-custom {% if 'teacher/groups' in request.path %}active{% endif %}">
-                    <i class="fas fa-users-class"></i> Менин группаларым
+                    <i class="fas fa-users"></i> Группаларым
+                </a>
+                <a href="{% url 'teacher_schedule' %}" class="nav-link-custom {% if 'teacher/schedule' in request.path %}active{% endif %}">
+                    <i class="fas fa-calendar-alt"></i> График
+                </a>
+
+            {% elif user.liststudent %}
+                <div class="nav-label">Жеке кабинет</div>
+                <a href="{% url 'student_dashboard' %}" class="nav-link-custom {% if 'student/dashboard' in request.path %}active{% endif %}">
+                    <i class="fas fa-user"></i> Панелим
+                </a>
+                <a href="{% url 'student_homework' %}" class="nav-link-custom {% if 'student/homework' in request.path %}active{% endif %}">
+                    <i class="fas fa-book-open"></i> Тапшырмалар
                 </a>
             {% endif %}
         </nav>
 
-        <div class="px-4 position-absolute bottom-0 w-100 mb-4">
+        <div class="logout-box position-absolute bottom-0 w-100">
             <form action="{% url 'logout' %}" method="post">{% csrf_token %}
-                <button type="submit" class="btn btn-outline-danger w-100 border-0 text-start">
-                    <i class="fas fa-sign-out-alt me-2"></i> Чыгуу
+                <button type="submit" class="btn btn-link text-danger text-decoration-none w-100 text-start px-3 py-2 rounded-3 border-0 bg-transparent nav-link-custom" style="color: #f87171 !important;">
+                    <i class="fas fa-power-off me-2"></i> Чыгуу
                 </button>
             </form>
         </div>
     </div>
 
     <div id="page-content-wrapper">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3 px-4 sticky-top">
-            <button class="btn btn-light d-lg-none me-3" id="menu-toggle"><i class="fas fa-bars"></i></button>
-            <h5 class="fw-bold m-0">
-                {% if user.is_superuser %}Администратор панели{% else %}Мугалимдин панели{% endif %}
-            </h5>
+        <nav class="navbar navbar-expand-lg navbar-light navbar-custom py-3 px-4 sticky-top">
+            <button class="btn btn-light d-lg-none me-3 shadow-sm rounded-circle" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="d-none d-md-block">
+                <h5 class="fw-800 m-0 text-dark">
+                    {% if user.is_superuser %}Администратор{% elif user.listteacher %}Мугалим{% else %}Окуучу{% endif %}
+                </h5>
+                <small class="text-muted">{{ user.username }} | Башкаруу системасы</small>
+            </div>
 
             <div class="ms-auto d-flex align-items-center">
-                <div class="text-end me-3">
-                    <div class="fw-bold small lh-1">{{ user.username }}</div>
-                    <small class="text-muted" style="font-size: 0.7rem;">
-                        {% if user.is_superuser %}Башкы Админ{% else %}Мугалим{% endif %}
-                    </small>
+                <div class="dropdown me-3">
+                    <button class="btn btn-white border-0 rounded-circle p-2 position-relative shadow-sm" type="button" data-bs-toggle="dropdown">
+                        <i class="far fa-bell fs-5 text-secondary"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 py-3 mt-2" style="width: 300px;">
+                        <li class="px-4 mb-2"><h6 class="fw-bold m-0">Билдирмелер</h6></li>
+                        <li><hr class="dropdown-divider opacity-50"></li>
+                        <li class="px-4 py-2 text-muted small text-center">Жаңы билдирмелер жок</li>
+                    </ul>
                 </div>
-                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=6366f1&color=fff" class="rounded-circle" width="35">
+
+                <div class="d-flex align-items-center bg-white p-1 pe-3 rounded-pill shadow-sm border">
+                    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=6366f1&color=fff&bold=true" class="rounded-circle" width="35">
+                    <div class="ms-2 d-none d-sm-block">
+                        <div class="fw-bold small lh-1 text-dark">{{ user.username }}</div>
+                    </div>
+                </div>
             </div>
         </nav>
 
-        <div class="p-4">
+        <div class="p-3 p-md-4">
             {% block content %}
             {% endblock %}
         </div>

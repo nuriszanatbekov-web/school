@@ -1,33 +1,96 @@
-{% extends "dashboard.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow border-0">
-                <div class="card-header bg-primary text-white py-3">
-                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i> {{ page_title }}</h5>
+<style>
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        max-width: 800px;
+        margin: 20px auto;
+    }
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 1px solid #e2e8f0;
+        background-color: #f8fafc;
+        margin-bottom: 5px;
+    }
+    .form-control:focus {
+        background-color: white;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+    .form-label {
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    .btn-save {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: 0.3s;
+    }
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        color: white;
+    }
+</style>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-800 m-0">{{ page_title }}</h2>
+        <a href="{% url 'list_view' model_name %}" class="btn btn-light rounded-pill px-4 border">
+            <i class="fas fa-arrow-left me-2"></i> Артка кайтуу
+        </a>
+    </div>
+
+    <div class="form-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row">
+                {% for field in form %}
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="text-danger small fw-bold mt-1">{{ error }}</div>
+                    {% endfor %}
                 </div>
-                <div class="card-body p-4">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <div class="d-flex justify-content-between mt-4">
-                            <a href="{% url 'list_view' model_name %}" class="btn btn-outline-secondary">Артка</a>
-                            <button type="submit" class="btn btn-success">Сактоо</button>
-                        </div>
-                    </form>
+                {% endfor %}
+            </div>
+
+            <hr class="my-4 opacity-50">
+
+            <div class="d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-save px-5">
+                    <i class="fas fa-save me-2"></i> Сактоо
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
-<style>
-    input, select, textarea {
-        display: block; width: 100%; padding: 0.375rem 0.75rem;
-        font-size: 1rem; border: 1px solid #ced4da; border-radius: 0.375rem;
-        margin-bottom: 15px;
-    }
-</style>
+<script>
+    // Формадагы бардык input жана select'терге автоматтык түрдө класстарды кошуу
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.type !== 'checkbox') {
+            el.classList.add('form-control');
+        } else {
+            el.classList.add('form-check-input');
+        }
+    });
+</script>
 {% endblock %}

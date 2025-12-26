@@ -8,4 +8,5 @@ urlpatterns = [
     path('journal/<int:group_id>/', views.group_journal, name='group_journal'),
     path('schedule/', views.teacher_schedule, name='teacher_schedule'),
     path('homework/', views.teacher_homework, name='teacher_homework'),
+    path('my-students/', views.teacher_students, name='teacher_students'),
 ]

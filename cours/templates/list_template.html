@@ -1,4 +1,4 @@
-{% extends "dashboard.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -7,192 +7,138 @@
 <style>
     :root {
         --primary: #6366f1;
-        --primary-dark: #4f46e5;
-        --bg-main: #f8fafc;
-        --glass: rgba(255, 255, 255, 0.8);
+        --accent: #a855f7;
         --text-dark: #0f172a;
         --text-gray: #64748b;
         --border: #e2e8f0;
     }
 
-    body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: var(--bg-main);
-    }
+    .admin-wrapper { padding: 1.5rem; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .admin-wrapper {
-        padding: 40px;
-    }
+    .header-pro { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .header-pro h1 { font-weight: 800; font-size: 1.85rem; color: var(--text-dark); letter-spacing: -1px; }
 
-    /* Glass Header Design */
-    .header-pro {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 40px;
-    }
-
-    .header-pro h1 {
-        font-weight: 800;
-        font-size: 2.2rem;
-        color: var(--text-dark);
-        letter-spacing: -1px;
-    }
-
-    /* Buttons Style */
     .btn-pro-add {
-        background: linear-gradient(135deg, var(--primary), #a855f7);
-        color: white;
-        padding: 12px 28px;
-        border-radius: 16px;
-        font-weight: 700;
-        border: none;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        text-decoration: none;
-        box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white !important; padding: 12px 24px; border-radius: 14px;
+        font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+        box-shadow: 0 8px 15px -3px rgba(99, 102, 241, 0.4); transition: 0.3s;
     }
+    .btn-pro-add:hover { transform: translateY(-2px); opacity: 0.9; }
 
-    .btn-pro-add:hover {
-        transform: scale(1.05) translateY(-3px);
-        box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.5);
-        color: white;
-    }
+    .main-card-pro { background: white; border-radius: 24px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .search-bar-area { padding: 24px; border-bottom: 1px solid #f1f5f9; background: #fff; }
 
-    /* Search Bar Design */
-    .search-container-pro {
-        background: white;
-        padding: 20px;
-        border-radius: 24px 24px 0 0;
-        border: 1px solid var(--border);
-        border-bottom: none;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
+    .search-box-pro { position: relative; flex: 1; }
+    .search-box-pro i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-gray); }
+    .search-box-pro input { width: 100%; padding: 12px 12px 12px 48px; border-radius: 12px; border: 1px solid var(--border); background: #f8fafc; }
 
-    .search-box-pro {
-        position: relative;
-        width: 400px;
-    }
+    .pro-table { width: 100%; border-collapse: collapse; }
+    .pro-table th { background: #f8fafc; padding: 16px 24px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-gray); text-align: left; }
+    .pro-table td { padding: 16px 24px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
 
-    .search-box-pro i {
-        position: absolute;
-        left: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-gray);
-    }
-
-    .search-box-pro input {
-        width: 100%;
-        padding: 14px 20px 14px 50px;
-        border-radius: 16px;
-        border: 1px solid var(--border);
-        background: #f1f5f9;
-        font-weight: 500;
-        transition: all 0.3s;
-    }
-
-    .search-box-pro input:focus {
-        outline: none;
-        background: white;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-    }
-
-    /* Table Glassmorphism */
-    .table-card-pro {
-        background: white;
-        border-radius: 0 0 24px 24px;
-        border: 1px solid var(--border);
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
-
-    .pro-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .pro-table thead th {
-        background: #f8fafc;
-        padding: 18px 25px;
-        font-size: 0.8rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        color: var(--text-gray);
-        letter-spacing: 0.05em;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .pro-table tbody td {
-        padding: 20px 25px;
-        border-bottom: 1px solid #f1f5f9;
-        color: var(--text-dark);
-        font-weight: 500;
-    }
-
-    .pro-table tbody tr:hover {
-        background: #fdfdfd;
-    }
-
-    /* Action Buttons */
-    .btn-action {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-        border: 1px solid var(--border);
-        background: white;
-        color: var(--text-gray);
-    }
-
-    .btn-edit:hover { background: #eef2ff; color: var(--primary); border-color: var(--primary); }
-    .btn-delete:hover { background: #fef2f2; color: #ef4444; border-color: #ef4444; }
-
+    .action-group { display: flex; gap: 8px; justify-content: flex-end; }
+    .btn-action { width: 38px; height: 38px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border); transition: 0.2s; text-decoration: none; }
+    .btn-edit { color: var(--primary); }
+    .btn-edit:hover { background: #eef2ff; border-color: var(--primary); }
+    .btn-delete { color: #ef4444; }
+    .btn-delete:hover { background: #fef2f2; border-color: #ef4444; }
 </style>
 
 <div class="admin-wrapper">
     <div class="header-pro">
         <div>
-            <h1>{% block list_title %}Башкаруу панели{% endblock %}</h1>
-            <p class="text-muted">{% block breadcrumb %}Администратордун жумушчу столу{% endblock %}</p>
+            <h1>{{ page_title }}</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'list_view' 'dashboard' %}">Башкы бет</a></li>
+                    <li class="breadcrumb-item active">{{ page_title }}</li>
+                </ol>
+            </nav>
         </div>
-        <a href="{% block create_url %}#{% endblock %}" class="btn-pro-add">
-            <i class="fas fa-plus-circle"></i>
-            {% block btn_text %}Жаңы кошуу{% endblock %}
+        <a href="{% url 'add_item_view' model_name %}" class="btn-pro-add">
+            <i class="fas fa-plus-circle"></i> Жаңы кошуу
         </a>
     </div>
 
-    <div class="search-container-pro">
-        <div class="search-box-pro">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Издөө жазыңыз...">
+    <div class="main-card-pro">
+        <div class="search-bar-area">
+            <form action="" method="GET" class="d-flex w-100 gap-2">
+                <div class="search-box-pro">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Издөө...">
+                </div>
+                <button type="submit" class="btn btn-dark rounded-pill px-4">Издөө</button>
+                {% if search_query %}
+                    <a href="{% url 'list_view' model_name %}" class="btn btn-light rounded-pill border">Тазалоо</a>
+                {% endif %}
+            </form>
         </div>
-        <div>
-            <button class="btn btn-light rounded-pill px-4 fw-bold border">
-                <i class="fas fa-sliders-h me-2"></i> Фильтр
-            </button>
-        </div>
-    </div>
 
-    <div class="table-card-pro">
         <div class="table-responsive">
             <table class="pro-table">
                 <thead>
-                    {% block table_header %}{% endblock %}
+                    <tr>
+                        <th width="80">ID</th>
+                        <th>Аталышы / Аты-жөнү</th>
+                        <th>Маалымат</th>
+                        <th>Филиал</th>
+                        <th class="text-end">Аракеттер</th>
+                    </tr>
                 </thead>
                 <tbody>
-                    {% block table_rows %}{% endblock %}
+                    {% for obj in object_list %}
+                    <tr>
+                        <td><span class="badge bg-light text-dark">#{{ obj.id }}</span></td>
+                        <td>
+                            <div class="fw-bold text-dark">
+                                {% if obj.fio %}{{ obj.fio }}
+                                {% elif obj.full_name %}{{ obj.full_name }}
+                                {% elif obj.name %}{{ obj.name }}
+                                {% elif obj.title %}{{ obj.title }}
+                                {% else %}Маалымат жок{% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                {% if obj.phone_number %}<i class="fas fa-phone me-1"></i> {{ obj.phone_number }}
+                                {% elif obj.subject %}<i class="fas fa-book me-1"></i> {{ obj.subject.name }}
+                                {% elif obj.price %}<i class="fas fa-tag me-1"></i> {{ obj.price }} сом
+                                {% else %}---{% endif %}
+                            </small>
+                        </td>
+                        <td>
+                            <small class="text-secondary">
+                                {% if obj.branch %}
+                                    {{ obj.branch.name }}
+                                {% elif obj.address %}
+                                    {{ obj.address }}
+                                {% else %}---{% endif %}
+                            </small>
+                        </td>
+                        <td>
+                            <div class="action-group">
+                                <a href="{% url 'edit_item_view' model_name obj.id %}" class="btn-action btn-edit">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                                <a href="{% url 'delete_item_view' model_name obj.id %}"
+                                   class="btn-action btn-delete"
+                                   onclick="return confirm('Өчүрүүнү каалайсызбы?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">Тизим бош</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 {% endblock %}
+

@@ -207,6 +207,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
+
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'dashboard'  # Логин болгондон кийин кайда барат
-LOGOUT_REDIRECT_URL = 'login'     # Чыккандан кийин кайсы баракка барат
+LOGIN_REDIRECT_URL = 'check_role'  # 'dashboard' ордуна 'check_role' деп жазыңыз
+LOGOUT_REDIRECT_URL = 'portal'
+
